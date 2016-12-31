@@ -1,0 +1,26 @@
+body {
+  background-color: darkblue;
+  color: white;
+  font-family: Verdana;
+  overflow-wrap: break-word;
+}
+p {
+  border: 2px solid red;
+  background-color: darkgray;
+  color: darkgreen;
+  float: left;
+  margin: 10px;
+  padding: 10px;
+  max-width: 1000px;
+  overflow-wrap: break-word;
+  clear: left;
+}
+h3, h4 {
+  margin: 10 px;
+  padding: 10px;
+  float: left;
+  clear: left;
+}
+table, th, td {
+   border: 1px solid white;
+}

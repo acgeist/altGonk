@@ -1,0 +1,13 @@
+body {
+  background-color: black;
+  color: white;
+  font-family: Verdana;
+}
+p {
+  border: 1px solid red;
+  background-color: darkgray;
+  color: darkgreen
+}
+table, th, td {
+   border: 1px solid white;
+}

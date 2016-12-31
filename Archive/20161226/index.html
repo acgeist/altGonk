@@ -1,0 +1,102 @@
+<!--
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'                               WX Gonkulator fore SOFs                             '
+'                                                                                   '
+'Author: Capt Andrew "Fore" Geist, 74 FS                                            '
+'Contact: andrew.geist.1@us.af.mil <mailto:andrew.geist.1@us.af.mil>                '
+'Version 1.5 CAO 20161112                                                           '
+'1.2   = First working version, using only TAFs                                     '
+'1.3   = Updates automatically upon opening, minor code optimization                '
+'1.4   = METARs fully incorporated, added usage log                                 '
+'1.4.1 = Migrated 1.4 to NIPR                                                       '
+'1.4.2 = Added field info, date/time stamp turns red if over 30 minutes old on open '
+'1.4.3 = Added sunrise/sunset times, changed to a 12-hour grid.                     '
+'2.0   = Moved to HTML/CSS/JS                                                       '
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'                          []                         []                            '
+'                          ||   ___     ___     ___   ||                            '
+'                          ||  /   \   /| |\   /   \  ||                            '
+'                          ||  | O |_ _|| ||__ | O |  ||                            '
+'                          ||  \___/--/^^^^^\--\___/  ||                            '
+'                      __  ||________|       |________||  __                        '
+'   .-----------------/  \-++--------|   .   |--------++-/  \-----------------.     '
+'  /.---------________|  |___________\__(*)__/___________|  |________---------.\    '
+'            |    |   '$$'   |                       |   '$$'   |    |              '
+'           (o)  (o)        (o)                     (o)        (o)  (o)             '
+'                                                                                   '
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'                      ________  ____  ___   ______  __________                     '
+'                     /_  __/ / / / / / / | / / __ \/ ____/ __ \                    '
+'                      / / / /_/ / / / /  |/ / / / / __/ / /_/ /                    '
+'                     / / / __  / /_/ / /|  / /_/ / /___/ _, _/                     '
+'                    /_/ /_/ /_/\____/_/ |_/_____/_____/_/ |_|                      '
+'                                                                                   '
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''    
+Notes to self:
+Testbed: 
+https://codepen.io/pen/
+https://html-online.com/editor/
+Free hosting: 
+https://neocities.org
+
+Learning
+http://www.w3schools.com/
+http://www.ironspider.ca/index.htm
+
+To Do
+http://www.w3schools.com/graphics/google_maps_intro.asp
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Wx Gonkulator</title>
+    <!-- The style.css file allows you to change the look of your web pages.
+         If you include the next line in all your web pages, they will all share the same look.
+         This makes it easier to make new pages for your site. -->
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <!-- http://www.w3schools.com/jquery/jquery_get_started.asp -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <h1>Wx Gonkulator for SOFs/Top 3s</h1>
+    <h2 id="xh2">This is h2</h2>
+
+    <div id="demo">
+      <h2>Let AJAX change this text</h2>
+      <button type="button" onclick="loadDoc()">Load Doc</button>
+    </div>
+    
+    <div><table><tbody>
+      <tr>
+        <td>a1</td><td>a2</td><td>a3</td>
+      </tr>
+      <tr>
+        <td>b1</td><td>b2</td><td>b3</td>
+      </tr>
+      <tr>
+        <td>c1</td><td>c2</td><td>c3</td>
+      </tr>
+    </tbody></table></div>
+    
+    <div>
+      <form>
+        Home Station: <br>
+        <input type="text" name="homeStation"><br>
+        Alternates: <br>
+        <input type="text" name="alt1"><br>
+        <input type="text" name="alt2"><br>
+        <input type="text" name="alt3"><br>
+      </form>
+    </div>
+
+    <div><p>
+      <button type="button" onclick="myFunction()">Chng hdg</button>
+      <button type="button" onclick="window.alert(5+6);">Alert</button>
+      <button type="button" onclick="document.getElementById('xPic').style.display='none'">Hide Pic</button>
+      <button type="button" onclick="document.getElementById('xPic').style.display='initial'">Show Pic</button>
+    </p></div>
+    <img src="filingTree.png" id="xPic" style.display = "none">
+    <script src="wxgonk.js"></script>
+  </body>
+</html>
