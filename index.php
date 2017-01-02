@@ -3,98 +3,77 @@
 
 <head>
   <title>Wx Gonkulator</title>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="description" content="Wx Gonkulator fore SOFs">
   <meta name="keywords" content="weather, ADDS, AWC, USAF, METAR, TAF">
   <meta name="author" content="Andrew Geist">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
   <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <link rel="shortcut icon" href="favicon.ico">
+  <!-- Latest compiled and minified Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi"
+    crossorigin="anonymous">
+  <!-- My own CSS stuff -->
+  <link rel="stylesheet" href="style.css">
   <style>
-    img.units {
-      height: 100px;
-      width: 100px;
-      margin: 5%;
-    }
+
   </style>
 </head>
 
 <body>
-  <div style="margin-left:10%;margin-right:10%;">
-    <header class="w3-panel w3-indigo w3-card-2">
-      <h1>Wx Gonkulator for SOFs/Top 3s</h1>
+  <div class="container-fluid">
+    <div class="d-block">
+    <header class="text-xs-center">
+      <h1 class="text-primary">Wx Gonkulator for SOFs/Top 3s</h1>
     </header>
-    <div class="w3-row-padding w3-margin-top">
-      <div class="w3-quarter">
-        <div class="w3-card-2">
-          <img src="pics/moody.jpg" alt="Moody AFB, GA" style="width:100%">
-          <div class="w3-container">
-            <h5>KVAD</h5>
-          </div>
-        </div>
-      </div>
-      <div class="w3-quarter">
-        <div class="w3-card-2">
-          <img src="pics/davis-monthan.jpg" alt="Moody AFB, GA" style="width:100%">
-          <div class="w3-container">
-            <h5>KDMA</h5>
-          </div>
-        </div>
-      </div>
-      <div class="w3-quarter">
-        <div class="w3-card-2">
-          <img src="pics/osan.jpg" alt="Osan AB, ROK" style="width:100%">
-          <div class="w3-container">
-            <h5>RKSO</h5>
-          </div>
-        </div>
-      </div>
-      <div class="w3-quarter">
-        <div class="w3-card-2">
-          <img src="pics/nellis.jpg" alt="Nellis AFB, GA" style="width:100%">
-          <div class="w3-container">
-            <h5>KLSV</h5>
-          </div>
-        </div>
-      </div>
     </div>
-    <!--
-    <form action="results.php" method="get">
-      <fieldset class="w3-card-2">
-        <legend>Input:</legend>
-        Home Station:<br>
-        <select name="bases">
-          <option value="kvad" selected>KVAD</option>
-          <option value="kdma">KDMA</option>
-          <option value="rkso">RKSO</option>
-          <option value="klsv">KLSV</option>
-          <option value="khif">KHIF</option>
-          <option value="paei">PAEI</option>
-          <option value="etad">ETAD</option>
-      </select>
-        <input type="text" name="homeStation" value="KVAD"></input>
-        </br>
-        Alternates:<br>
-        <input type="text" name="alternates" value="KVLD KNIP KJAX KWRB KSAV KPAM KSVN KLSF KABY KTLH KGNV KDAB"></input><br>
-        <input type="submit" value="Submit">
-      </fieldset>
-    </form>
-    <form action="action_page.php">
-      <input list="browsers" name="browser">
-      <datalist id="browsers">
-        <option value="Internet Explorer">
-        <option value="Firefox">
-        <option value="Chrome">
-        <option value="Opera">
-        <option value="Safari">
-      </datalist>
-      <input type="submit">
-    </form>
--->
-    <footer class="w3-panel w3-indigo w3-card-2">
-      <h4>Feedback to Fore!</h4>
+    <div class="row">
+      <a href="#">
+        <div class="col-xs-3">
+          <img src="pics/moody.jpg" alt="Moody AFB, GA" title="Moody AFB, GA">
+          <h5><abbr title="Moody AFB, GA">KVAD</abbr></h5>
+        </div>
+      </a>
+      <a href="#">
+        <div class="col-xs-3">
+          <img src="pics/davis-monthan.jpg" alt="Davis-Monthan AFB, AZ" title="Davis-Monthan AFB, AZ">
+          <h5><abbr title="Davis-Monthan AFB, AZ">KDMA</abbr></h5>
+        </div>
+      </a>
+      <a href="#">
+        <div class="col-xs-3">
+          <img src="pics/osan.jpg" alt="Osan AB, ROK" title="Osan AB, ROK">
+          <h5><abbr title="Osan AB, ROK">RKSO</abbr></h5>
+        </div>
+      </a>
+      <a href="#">
+        <div class="col-xs-3">
+          <img src="pics/nellis.png" alt="Nellis AFB, NV" title="Nellis AFB, NV">
+          <h5><abbr title="Osan AB, ROK">KLSV</abbr></h5>
+        </div>
+      </a>
+    </div>
+    <footer class="">
+      <h4 class="">Feedback to Fore!</h4>
     </footer>
   </div>
+  <!-- Latest compiled Bootstrap JavaScript -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha384-XTs3FgkjiBgo8qjEjBk0tGmf3wPrWtA6coPfQDfFEY8AnYJwjalXCiosYRBIBZX8"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK"
+    crossorigin="anonymous"></script>
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <!-- look this up - do I understand correctly that scripts should go at the bottom of the HTML code? -->
+  <script>
+    $(document).ready(function () {
+      $("h5").addClass("text-xs-center");
+      $("img").addClass("img-thumbnail");
+    });
+  </script>
 </body>
 
 </html>
