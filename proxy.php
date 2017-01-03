@@ -7,7 +7,7 @@
     ini_set('display_errors', true);
     set_exception_handler('ReturnError');
     $result = '';
-    $url = (isset($_GET['url']) ? $_GET['url'] : null);
+    $url = (isset($_POST['url']) ? $_POST['url'] : null);
     echo "<h4>I (the proxy) was sent the following url: </h4><p>" . $url . '</p>';
     if ($url){
         $ch = curl_init();
