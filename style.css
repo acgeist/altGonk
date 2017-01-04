@@ -3,8 +3,10 @@ body {
   margin-right: 10%;
 }
 
-img, button {
+img,
+button {
   width: 100%;
+  max-width: 225px;
   max-height: 250px;
   margin: 10px;
 }

@@ -8,7 +8,7 @@
     set_exception_handler('ReturnError');
     $result = '';
     $url = (isset($_POST['url']) ? $_POST['url'] : null);
-    echo "<h4>I (the proxy) was sent the following url: </h4><p>" . $url . '</p>';
+    // echo "<h4>I (the proxy) was sent the following url: </h4><p>" . $url . '</p>';
     if ($url){
         $ch = curl_init();
         curl_setopt_array($ch, array(
@@ -23,14 +23,18 @@
     }
     if ($result){
         //Option 1
-        echo '<h4>Here\'s the raw text of what I got back: </h4>';
-        echo '<p>' . $result . '</p>';
+        // echo '<h4>Here\'s the raw text of what I got back: </h4>';
+        // echo '<p>' . $result . '</p>';
+        
         //Option 2
-        echo '<h4>Here it is formatted as a SimpleXmlElement: </h4><p>';
-        print_r(new SimpleXMLElement($result)) . '</p>';
+        //echo '<h4>Here it is formatted as a SimpleXmlElement: </h4><p>';
+        //print_r(new SimpleXMLElement($result));
+        //echo '</p>';
+        
         //Option 3
-        echo '<h4>Here is the SimpleXmlElement using json_encode: </h4><p>';
-        echo json_encode(new SimpleXMLElement($result)) . '</p>';
+        //echo '<h4>Here is the SimpleXmlElement using json_encode: </h4><p>';
+        echo json_encode(new SimpleXMLElement($result));
+        //echo '</p>';
     } else {
         ReturnError();
     }
