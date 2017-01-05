@@ -41,7 +41,8 @@ function genFieldUrl(stations) {
             outputString = outputString + "%20" + stationArray[i];
         }
     }
-    // console.log("genFieldUrl(" + stations + ") = " + outputString);
+    console.log("genFieldUrl(" + stations + ") = " + outputString);
+    console.log("replace w/regex = https://www.aviationweather.gov/adds/dataserver_current/httpparam?dataSource=stations&requestType=retrieve&format=xml&stationString=" + stations.replace)
     return outputString;
 }
 
