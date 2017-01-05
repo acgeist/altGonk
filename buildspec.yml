@@ -1,23 +1,21 @@
-#http://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html
+--- 
+artifacts: 
+  discard-paths: false
+  files: 
+    - "**/*"
+environment_variables: 
+  plaintext: ~
+phases: 
+  build: 
+    commands: 
+      - "echo Nothing to do in the build phase..."
+  install: 
+    commands: 
+      - "echo Nothing to do in the install phase..."
+  post_build: 
+    commands: 
+      - "echo Nothing to do in the post_build phase..."
+  pre_build: 
+    commands: 
+      - "echo Nothing to do in the pre_build phase..."
 version: 2.0
-
-environment_variables:
-  plaintext:
-
-phases:
-  install:
-    commands:
-      - echo Nothing to do in the install phase...
-  pre_build:
-    commands:
-      - echo Nothing to do in the pre_build phase...
-  build:
-    commands:
-      - echo Nothing to do in the build phase...
-  post_build:
-    commands:
-      - echo Nothing to do in the post_build phase...
-artifacts:
-  files:
-    - '**/*'
-  discard-paths: no

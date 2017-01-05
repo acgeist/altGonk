@@ -42,7 +42,8 @@ function genFieldUrl(stations) {
         }
     }
     console.log("genFieldUrl(" + stations + ") = " + outputString);
-    console.log("replace w/regex = https://www.aviationweather.gov/adds/dataserver_current/httpparam?dataSource=stations&requestType=retrieve&format=xml&stationString=" + stations.replace)
+    console.log("replace w/regex = https://www.aviationweather.gov/adds/dataserver_current/httpparam?dataSource=stations&requestType=retrieve&format=xml&stationString=" + stations.replace(/" "/g, "%20"));
+    console.log("hard way === replace? : " + outputString === "https://www.aviationweather.gov/adds/dataserver_current/httpparam?dataSource=stations&requestType=retrieve&format=xml&stationString=" + stations.replace(/" "/g, "%20"));
     return outputString;
 }
 
