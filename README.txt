@@ -35,4 +35,5 @@ to home base
 *Unit testing
 *Geo-locate users? http://diveintohtml5.info/geolocation.html 
 *Assess performance: https://developers.google.com/web/fundamentals/performance/, https://developer.yahoo.com/performance/rules.html, https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Tips_for_authoring_fast-loading_HTML_pages 
+*https://jscompress.com/
 -->
