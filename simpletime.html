@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>USNO Master Clock</title>
+<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-STORE">
+<script type="text/javascript" language="javascript">
+	$.post("proxy.php", {
+		url: "tycho.usno.navy.mil/simpletime.html"
+	}).done(function(result){
+		var el = document.createElement("div");
+		el.innerHTML = result;
+		document.body.appendChild(el);
+	}).fail(function(){
+		window.alert("fail!");
+	});
+</script>
+</head>
+
+<body>
+<CENTER>
+<FONT SIZE="+2">
+<b>US Naval Observatory Master Clock Time:</b>
+<div class="USNOtime" id="USNOtime">Javascript must be Enabled</div>
+<br />
+
+</FONT>
+</CENTER>
+</body>
+</html>

@@ -10,3 +10,9 @@ button {
   max-height: 250px;
   margin: 10px;
 }
+pre {
+  height: 20%;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}

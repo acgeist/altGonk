@@ -8,50 +8,45 @@
   <meta name="keywords" content="weather, ADDS, AWC, USAF, METAR, TAF">
   <meta name="author" content="Andrew Geist">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
-  <link rel="shortcut icon" href="pics/favicon.ico">
+  <link rel="shortcut icon" href="images/favicon.ico">
   <!-- Latest compiled and minified Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi"
     crossorigin="anonymous">
   <!-- My own CSS stuff -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles/style.css">
   <style>
 
   </style>
 </head>
 
-<body class="myClass">
+<body>
   <div class="container-fluid">
-    <div class="d-block">
       <header class="text-xs-center">
         <h1 class="text-primary">Wx Gonkulator for SOFs</h1>
       </header>
-    </div>
-    <div class="table-responsive">
       <table hidden id="masterTable" class = "table table-sm table-bordered table-inverse"></table>
-    </div>
-    <div class="row">
+    <div hidden class="row">
       <a href="#" class="prebuilt" value="KVAD KVLD KNIP KJAX KWRB KSAV KPAM KSVN KLSF KABY KTLH KGNV KDAB">
         <div class="col-sm-3">
-          <img src="pics/moody.jpg" alt="Moody AFB, GA" title="Moody AFB, GA" class="img-thumbnail">
+          <img src="images/moody.jpg" alt="Moody AFB, GA" title="Moody AFB, GA" class="img-thumbnail">
           <h5 class="text-xs-center"><abbr title="Moody AFB, GA">KVAD</abbr></h5>
         </div>
       </a>
-      <a href="#" class="prebuilt" value="KDMA KTUS KLUF KGXF KFHU KZAB KHMN KLSV KIWA KNYL">
+      <a href="#" class="prebuilt" value="KDMA KTUS KLUF KGXF KFHU KABQ KHMN KLSV KIWA KNYL">
         <div class="col-sm-3">
-          <img src="pics/davis-monthan.jpg" alt="Davis-Monthan AFB, AZ" title="Davis-Monthan AFB, AZ" class="img-thumbnail">
+          <img src="images/davis-monthan.jpg" alt="Davis-Monthan AFB, AZ" title="Davis-Monthan AFB, AZ" class="img-thumbnail">
           <h5 class="text-xs-center"><abbr title="Davis-Monthan AFB, AZ">KDMA</abbr></h5>
         </div>
       </a>
       <a href="#" class="prebuilt" value="RKSO RKTU RKTN RKSG RKNN RKPK RKSS RKJJ RKSI RKPC RKTI RKJK RKTH RKPS RKTP RKSM RKSW RKNW RKTY">
         <div class="col-sm-3">
-          <img src="pics/osan.jpg" alt="Osan AB, ROK" title="Osan AB, ROK" class="img-thumbnail">
+          <img src="images/osan.jpg" alt="Osan AB, ROK" title="Osan AB, ROK" class="img-thumbnail">
           <h5 class="text-xs-center"><abbr title="Osan AB, ROK">RKSO</abbr></h5>
         </div>
       </a>
       <a href="#" class="prebuilt" value="KLSV KINS KEDW KLUF KNID KNYL KNLC KNFL KHIF">
         <div class="col-sm-3">
-          <img src="pics/nellis.png" alt="Nellis AFB, NV" title="Nellis AFB, NV" class="img-thumbnail">
+          <img src="images/nellis.png" alt="Nellis AFB, NV" title="Nellis AFB, NV" class="img-thumbnail">
           <h5 class="text-xs-center"><abbr title="Osan AB, ROK">KLSV</abbr></h5>
         </div>
       </a>
@@ -59,16 +54,13 @@
     <div hidden class="row">
       <div class="col-sm-3">
         <a href="#" id="testButton">
-          <img src="pics/custom.png" alt="User-defined/Custom" title="User-defined/Custom" id="testButton" class="img-thumbnail">
+          <img src="images/custom.png" alt="User-defined/Custom" title="User-defined/Custom" id="testButton" class="img-thumbnail">
           <h5 class="text-xs-center" title="User-defined/Custom">Custom</h5>
           <p hidden id="testParam" value="KVAD KSEA KATL"></p>
         </a>
       </div>
     </div>
     <footer class="">
-          <div class="breakSomeWords">    
-          <p id="returnedData"></p>
-          </div>
       <h4 hidden class="">This is the footer.</h4>
     </footer>
   </div>
@@ -80,12 +72,8 @@
       crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js" integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK"
       crossorigin="anonymous"></script>
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="wxgonk.js"></script>
+    <script src="scripts/wxgonk.js"></script>
   </div>
-  <!-- look this up - do I understand correctly that scripts should go at the bottom of the HTML code? -->
-  <script>addListeners();</script>
 </body>
 
 </html>
