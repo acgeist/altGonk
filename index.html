@@ -16,54 +16,44 @@
   <link rel="stylesheet" href="styles/style.css">
   <style>
 
+
   </style>
 </head>
 
 <body>
-  <div class="container-fluid">
-      <header class="text-xs-center">
-        <h1 class="text-primary">Wx Gonkulator for SOFs</h1>
-      </header>
-      <table hidden id="masterTable" class = "table table-sm table-bordered table-inverse"></table>
-    <div hidden class="row">
+  <header class="text-xs-center">
+    <h1 class="text-primary">Wx Gonkulator for SOFs</h1> </header>
+  <div id="tableContainer"></div>
+  <div id="fieldOptions">
+    <div class="row">
       <a href="#" class="prebuilt" value="KVAD KVLD KNIP KJAX KWRB KSAV KPAM KSVN KLSF KABY KTLH KGNV KDAB">
-        <div class="col-sm-3">
-          <img src="images/moody.jpg" alt="Moody AFB, GA" title="Moody AFB, GA" class="img-thumbnail">
-          <h5 class="text-xs-center"><abbr title="Moody AFB, GA">KVAD</abbr></h5>
-        </div>
+        <div class="col-sm-3"> <img src="images/moody.jpg" alt="Moody AFB, GA" title="Moody AFB, GA" class="img-thumbnail">
+          <h5 class="text-xs-center"><abbr title="Moody AFB, GA">KVAD</abbr></h5> </div>
       </a>
       <a href="#" class="prebuilt" value="KDMA KTUS KLUF KGXF KFHU KABQ KHMN KLSV KIWA KNYL">
-        <div class="col-sm-3">
-          <img src="images/davis-monthan.jpg" alt="Davis-Monthan AFB, AZ" title="Davis-Monthan AFB, AZ" class="img-thumbnail">
-          <h5 class="text-xs-center"><abbr title="Davis-Monthan AFB, AZ">KDMA</abbr></h5>
-        </div>
+        <div class="col-sm-3"> <img src="images/davis-monthan.jpg" alt="Davis-Monthan AFB, AZ" title="Davis-Monthan AFB, AZ" class="img-thumbnail">
+          <h5 class="text-xs-center"><abbr title="Davis-Monthan AFB, AZ">KDMA</abbr></h5> </div>
       </a>
       <a href="#" class="prebuilt" value="RKSO RKTU RKTN RKSG RKNN RKPK RKSS RKJJ RKSI RKPC RKTI RKJK RKTH RKPS RKTP RKSM RKSW RKNW RKTY">
-        <div class="col-sm-3">
-          <img src="images/osan.jpg" alt="Osan AB, ROK" title="Osan AB, ROK" class="img-thumbnail">
-          <h5 class="text-xs-center"><abbr title="Osan AB, ROK">RKSO</abbr></h5>
-        </div>
+        <div class="col-sm-3"> <img src="images/osan.jpg" alt="Osan AB, ROK" title="Osan AB, ROK" class="img-thumbnail">
+          <h5 class="text-xs-center"><abbr title="Osan AB, ROK">RKSO</abbr></h5> </div>
       </a>
       <a href="#" class="prebuilt" value="KLSV KINS KEDW KLUF KNID KNYL KNLC KNFL KHIF">
-        <div class="col-sm-3">
-          <img src="images/nellis.png" alt="Nellis AFB, NV" title="Nellis AFB, NV" class="img-thumbnail">
-          <h5 class="text-xs-center"><abbr title="Osan AB, ROK">KLSV</abbr></h5>
-        </div>
+        <div class="col-sm-3"> <img src="images/nellis.png" alt="Nellis AFB, NV" title="Nellis AFB, NV" class="img-thumbnail">
+          <h5 class="text-xs-center"><abbr title="Osan AB, ROK">KLSV</abbr></h5> </div>
       </a>
     </div>
-    <div hidden class="row">
+    <div class="row">
       <div class="col-sm-3">
-        <a href="#" id="testButton">
-          <img src="images/custom.png" alt="User-defined/Custom" title="User-defined/Custom" id="testButton" class="img-thumbnail">
+        <a href="#" id="testButton"> <img src="images/custom.png" alt="User-defined/Custom" title="User-defined/Custom" id="testButton" class="img-thumbnail">
           <h5 class="text-xs-center" title="User-defined/Custom">Custom</h5>
-          <p hidden id="testParam" value="KVAD KSEA KATL"></p>
+          <p id="testParam" value="KVAD KSEA KATL"></p>
         </a>
       </div>
     </div>
-    <footer class="">
-      <h4 hidden class="">This is the footer.</h4>
-    </footer>
   </div>
+  <footer class="">
+    <h4 class="">This is the footer.</h4> </footer>
   <div>
     <!-- Latest compiled Bootstrap JavaScript -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7"

@@ -8,9 +8,8 @@ TODO:
 -Add a legend showing what each color means.
 -Allow user to hand-jam timezone/UTC offset
 -Embed a picture of the filing tree?
--Ensure a cell can't get upgraded.
 */
-const TEST_CASE_STATIONS = "KGEG KVAD KHLN KBLU KTRK KSXT CYVO CYSB";
+const TEST_CASE_STATIONS = "KGRB KSAW KFSD KOMA KJXN KORD KCVG KCRW";
 const FILING_MINS = {
   "vis": 1.5,
   "ceiling": 500
@@ -52,15 +51,17 @@ function makeUrl(dataSource, stationList) {
 }
 
 function hasCeil(skyCondNode) {
-  if (Array.isArray(skyCondNode)) {
+  if (skyCondNode === undefined){
+    return false;
+  } else if (Array.isArray(skyCondNode)) {
     return skyCondNode.filter(function (layer) {
-        return layer["@attributes"].sky_cover === "BKN" || layer["@attributes"].sky_cover === "OVC" || layer[
-          "@attributes"].sky_cover === "OVX";
+        var type = layer["@attributes"].sky_cover;
+        return type === "BKN" || type === "OVC" || type === "OVX";
       })
       .length > 0;
   } else {
-    return skyCondNode["@attributes"]["sky_cover"] === "BKN" || skyCondNode["@attributes"]["sky_cover"] === "OVC" ||
-      skyCondNode["@attributes"]["sky_cover"] === "OVX";
+    var type = skyCondNode["@attributes"]["sky_cover"];
+    return type === "BKN" || type === "OVC" || type === "OVX";
   }
 }
 
@@ -81,31 +82,83 @@ function getCeilFromSkyCond(skyCondNode) {
   }
 }
 
-function canFileMetar(metarJson, useCirclAppch = false) {
-  return useCirclAppch ? metarJson.visibility_statute_mi >= FILING_MINS.vis && getCeilFromSkyCond(metarJson.sky_condition) >=
-    FILING_MINS.ceiling : metarJson.visibility_statute_mi >= FILING_MINS.vis;
+function canFile(wxJson, useCirclAppch = false) {
+  //TODO: rewrite this more efficiently/succinctly
+  if (!useCirclAppch && wxJson.visibility_statute_mi !== undefined) {
+    return wxJson.visibility_statute_mi >= FILING_MINS.vis;
+  } else if (useCirclAppch && wxJson.visibility_statute_mi !== undefined) {
+    return wxJson.visibility_statute_mi >= FILING_MINS.vis && getCeilFromSkyCond(wxJson.sky_condition) >= FILING_MINS.ceiling;
+  } else if (!useCirclAppch && wxJson.visibility_statute_mi === undefined) {
+    return true;
+  } else if (useCirclAppch && wxJson.visibility_statute_mi === undefined) {
+    return getCeilFromSkyCond(wxJson.sky_condition) >= FILING_MINS.ceiling;
+  }
 }
 
-function altReqdMetar(metarJson) {
-  return metarJson.visibility_statute_mi < ALT_REQ.vis || getCeilFromSkyCond(metarJson.sky_condition) < ALT_REQ.ceiling;
+function altReqd(wxJson) {
+  return (wxJson.visibility_statute_mi === undefined ? false : wxJson.visibility_statute_mi < ALT_REQ.vis) ||
+    getCeilFromSkyCond(wxJson.sky_condition) < ALT_REQ.ceiling;
 }
 
-function isValidAltMetar(metarJson) {
-  return metarJson.visibility_statute_mi >= ALT_MINS.vis && getCeilFromSkyCond(metarJson.sky_condition) >= ALT_MINS.ceiling;
+function isValidAlt(wxJson) {
+  return (wxJson.visibility_statute_mi === undefined ? true : wxJson.visibility_statute_mi >= ALT_MINS.vis) &&
+    getCeilFromSkyCond(wxJson.sky_condition) >= ALT_MINS.ceiling;
 }
 
-function isValidAltButTempoBelowMins(tafJson) {}
+function belowMinsForTempShwrs(forecast) {
+  return ((forecast.visibility_statute_mi === undefined ? false : forecast.visibility_statute_mi < ALT_MINS.vis) ||
+      getCeilFromSkyCond(forecast.sky_condition) < ALT_REQ.ceiling) && (/(TS|SHRA|SHSN)/i.test(forecast.wx_string)) &&
+    /TEMPO/i.test(forecast.change_indicator);
+}
 
 function getStoplightClassFromMetar(metarJson, isHomeStation = false) {
-  if (isHomeStation && !canFileMetar(metarJson)) {
+  if (isHomeStation && !canFile(metarJson)) {
+    //console.log("getStoplightClassFromMetar(" + metarJson.raw_text + ", isHomeStation = " + isHomeStation +
+    //  ") --> RED.")
     return STOPLIGHT_RED_CLASS;
-  } else if (isHomeStation && altReqdMetar(metarJson)) {
+  } else if (isHomeStation && altReqd(metarJson)) {
+    //console.log("getStoplightClassFromMetar(" + metarJson.raw_text + ", isHomeStation = " + isHomeStation +
+    //  ") --> YELLOW.")
     return STOPLIGHT_YELLOW_CLASS;
   } else if (isHomeStation) {
+    //console.log("getStoplightClassFromMetar(" + metarJson.raw_text + ", isHomeStation = " + isHomeStation +
+    //  ") --> GREEN.")
     return STOPLIGHT_GREEN_CLASS;
-  } else if (!isValidAltMetar(metarJson)) {
+  } else if (!isValidAlt(metarJson)) {
+    //console.log("getStoplightClassFromMetar(" + metarJson.raw_text + ", isHomeStation = " + isHomeStation +
+    //  ") --> RED.")
     return STOPLIGHT_RED_CLASS;
   } else {
+    //console.log("getStoplightClassFromMetar(" + metarJson.raw_text + ", isHomeStation = " + isHomeStation +
+    //  ") --> GREEN.")
+    return STOPLIGHT_GREEN_CLASS;
+  }
+}
+
+function getStoplightClassFromTaf(tafJson, isHomeStation = false) {
+  if (isHomeStation && !canFile(tafJson)) {
+    // console.log("tafStoplight(" + getCeilFromSkyCond(tafJson.sky_condition) + "/" + tafJson.visibility_statute_mi +
+    //   "SM, isHomeStation = " + isHomeStation + ") --> RED.")
+    return STOPLIGHT_RED_CLASS;
+  } else if (isHomeStation && altReqd(tafJson)) {
+    // console.log("tafStoplight(" + getCeilFromSkyCond(tafJson.sky_condition) + "/" + tafJson.visibility_statute_mi +
+    //   "SM, isHomeStation = " + isHomeStation + ") --> YELLOW.")
+    return STOPLIGHT_YELLOW_CLASS;
+  } else if (isHomeStation) {
+    // console.log("tafStoplight(" + getCeilFromSkyCond(tafJson.sky_condition) + "/" + tafJson.visibility_statute_mi +
+    //   "SM, isHomeStation = " + isHomeStation + ") --> GREEN.")
+    return STOPLIGHT_GREEN_CLASS;
+  } else if (!isValidAlt(tafJson)) {
+    // console.log("tafStoplight(" + getCeilFromSkyCond(tafJson.sky_condition) + "/" + tafJson.visibility_statute_mi +
+    //   "SM, isHomeStation = " + isHomeStation + ") --> RED.")
+    return STOPLIGHT_RED_CLASS;
+  } else if (belowMinsForTempShwrs(tafJson)) {
+    // console.log("tafStoplight(" + getCeilFromSkyCond(tafJson.sky_condition) + "/" + tafJson.visibility_statute_mi +
+    //   "SM, isHomeStation = " + isHomeStation + ") --> YELLOW.")
+    return STOPLIGHT_YELLOW_CLASS;
+  } else {
+    // console.log("tafStoplight(" + getCeilFromSkyCond(tafJson.sky_condition) + "/" + tafJson.visibility_statute_mi +
+    //   "SM, isHomeStation = " + isHomeStation + ") --> GREEN.")
     return STOPLIGHT_GREEN_CLASS;
   }
 }
@@ -118,6 +171,17 @@ function convertTextTime(textTime) {
     hours = textTime.replace(/^"?(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)Z"?$/i, "$4"),
     minutes = textTime.replace(/^"?(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)Z"?$/i, "$5");
   return new Date(Date.UTC(year, month, date, hours, minutes));
+}
+
+function getLocalFromIsoZulu(zuluTime){
+  var offset = +(new Date().toString().match(/([\+-][0-9][0-9])/)[1]),
+    year = +zuluTime.replace(/^"?(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)Z"?$/i, "$1"),
+    //Subtract one from the month since Javascript uses zero-subscripting (e.g. February = 1).
+    month = +zuluTime.replace(/^"?(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)Z"?$/i, "$2") - 1,
+    date = +zuluTime.replace(/^"?(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)Z"?$/i, "$3"),
+    hours = +zuluTime.replace(/^"?(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)Z"?$/i, "$4");
+  //console.log("Converting " + zuluTime + ". Changing hours from " + hours + " to " + +(hours + offset));
+  return new Date(year, month, date, (hours + offset));
 }
 
 function qcStoplight(newClass, currClass) {
@@ -163,22 +227,51 @@ var processMetarData = function (metarJson) {
       var fieldIdCell = document.getElementById(field.station_id);
       fieldIdCell.setAttribute("title", fieldIdCell.getAttribute("title")
         .replace(/METAR:/i, "METAR:\n" + field.raw_text));
-      var cell = document.createElement("td");
+      //var cell = document.createElement("td");
+      var cell = fieldIdCell.nextSibling;
       cell.setAttribute("class", qcStoplight(getStoplightClassFromMetar(field, fieldIdCell.parentElement.rowIndex ===
         1), cell.getAttribute("class")));
+      /*
       cell.innerHTML = ("00" + (getCeilFromSkyCond(field.sky_condition) / 100))
         .slice(-3) + "/" + field.visibility_statute_mi + "SM";
-      fieldIdCell.parentNode.appendChild(cell);
-      fieldIdCell.nextSibling.setAttribute("title", field.raw_text);
+      */
+      cell.setAttribute("title", field.raw_text);
     });
 }
 var processTafData = function (tafJson) {
-  //printRawJson(tafJson);
+  printRawJson(tafJson);
   JSON.parse(tafJson)["data"]["TAF"].forEach(function (field) {
+    //console.log("****************" + field.station_id + "****************");
     var fieldIdCell = document.querySelector("#" + field.station_id);
+    var fieldIdRow = fieldIdCell.parentElement;
     fieldIdCell.setAttribute("title", fieldIdCell.getAttribute("title")
       .replace(/TAF:/i, "TAF:\n" + field.raw_text.replace(/(TEMPO|FM|BECMG)/gi, "\n$1")));
-  })
+    if (Array.isArray(field.forecast)) {
+      field.forecast.forEach(tafLine => {
+        // console.log("Looking at a TAF line that goes from " + tafLine.fcst_time_from + " to " + tafLine.fcst_time_to);
+        // console.log("Converting those times to local: " + getLocalFromIsoZulu(tafLine.fcst_time_from) + "-->" + getLocalFromIsoZulu(tafLine.fcst_time_to));
+        for (var i = 1; i < fieldIdRow.cells.length; i++) {
+          //console.log("Comparing it to a cell that starts at " + fieldIdRow.cells[i].getAttribute("data-starttime"));
+          if (new Date(fieldIdRow.cells[i].getAttribute("data-starttime")) >= getLocalFromIsoZulu(tafLine.fcst_time_from) &&
+            new Date(fieldIdRow.cells[i].getAttribute("data=starttime") < getLocalFromIsoZulu(tafLine.fcst_time_to))
+          ) {
+            fieldIdRow.cells[i].setAttribute("class", qcStoplight(getStoplightClassFromTaf(tafLine, fieldIdRow.rowIndex === 1)));
+          }
+        }
+      });
+    } else {
+      // console.log("Looking at a TAF line that goes from " + field.forecast.fcst_time_from + " to " + field.forecast.fcst_time_to);
+      // console.log("Converting those times to local: " + getLocalFromIsoZulu(field.forecast.fcst_time_from) + "-->" + getLocalFromIsoZulu(field.forecast.fcst_time_to));
+      for (var i = 1; i < fieldIdRow.cells.length; i++) {
+        //console.log("Comparing it to a cell that starts at " + fieldIdRow.cells[i].getAttribute("data-starttime"));
+        if (new Date(fieldIdRow.cells[i].getAttribute("data-starttime")) >= getLocalFromIsoZulu(field.forecast.fcst_time_from) &&
+          new Date(fieldIdRow.cells[i].getAttribute("data=starttime") < getLocalFromIsoZulu(field.forecast.fcst_time_to))
+        ) {
+          fieldIdRow.cells[i].setAttribute("class", qcStoplight(getStoplightClassFromTaf(field.forecast, fieldIdRow.rowIndex === 1)));
+        }
+      }
+    }
+  });
 }
 
 function printRawJson(jsonString) {
@@ -189,36 +282,55 @@ function printRawJson(jsonString) {
 }
 
 function buildTable(fieldNames, hours = 12) {
-  var i,
-    tableBuildString = "",
-    fieldArray = fieldNames.split(" "),
+  var fieldArray = fieldNames.split(" "),
     currTime = new Date(),
+    offset = +currTime.toString().match(/([\+-][0-9][0-9])/)[1],
     currLocalHour = currTime.getHours(),
-    currUtcHour = currTime.getUTCHours();
-  tableBuildString += "<tr><th>UTC Offset: " + currTime.toString()
-    .match(/([\+-][0-9][0-9])/)[1] + "<br>UTC Day: " + currTime.getUTCDate() + "</th>";
-  for (i = 0; i < hours; i++) {
-    tableBuildString += "<th>" + (currLocalHour + i) % 24 + "L/" + (currUtcHour + i) % 24 + "Z</th>";
+    currUtcHour = currTime.getUTCHours(),
+    table = document.createElement("table"),
+    tempTr = document.createElement("tr"),
+    tempTh = document.createElement("th"),
+    tempTd;
+  tempTh.innerHTML = "UTC Offset: " + offset + "<br>UTC Day: " + currTime.getUTCDate()
+  tempTr.appendChild(tempTh);
+  for (let i = 0; i < hours; i++) {
+    tempTh = document.createElement("th");
+    tempTh.innerHTML = (currLocalHour + i) % 24 + "L<br>" + (currUtcHour + i) % 24 + "Z";
+    tempTr.appendChild(tempTh);
   }
-  tableBuildString += "</tr>";
-  for (i = 0; i < fieldArray.length; i++) {
-    tableBuildString += "<tr><td class=\"";
-    tableBuildString += i === 0 ? HOME_STATION_CLASS : ALT_CLASS;
-    tableBuildString += "\" id=\"" + fieldArray[i] + "\" title=\"" + "NAME:\nMETAR:\nTAF:" + "\">" + fieldArray[i] +
-      "</td>";
-    tableBuildString += "</tr>";
-  }
-  document.getElementById("masterTable")
-    .removeAttribute("hidden");
-  document.getElementById("masterTable")
-    .innerHTML = tableBuildString;
+  table.appendChild(tempTr);
+  fieldArray.forEach((field, i) => {
+    tempTr = document.createElement("tr");
+    tempTd = document.createElement("td");
+    tempTd.setAttribute("class", i === 0 ? HOME_STATION_CLASS : ALT_CLASS);
+    tempTd.setAttribute("id", field);
+    tempTd.setAttribute("title", "NAME:\nMETAR:\nTAF:");
+    tempTd.innerHTML = field;
+    tempTr.appendChild(tempTd);
+    for (let j = 0; j < hours; j++) {
+      tempTd = document.createElement("td");
+      tempTd.setAttribute("data-ICAO", field);
+      // console.log("New Date (offset = " + offset + ", j = " + j + ") = " + 
+      //   new Date(currTime.getFullYear(),currTime.getMonth(),currTime.getDate(),currTime.getHours() + j));
+      tempTd.setAttribute("data-startTime", new Date(currTime.getFullYear(),currTime.getMonth(),currTime.getDate(),currTime.getHours() + j));
+      tempTr.appendChild(tempTd);
+    }
+    table.appendChild(tempTr);
+  });
+  table.setAttribute("class", "table table-sm table-bordered table-inverse");
+  table.setAttribute("id", "wxTable");
+  return table;
 }
 
 function addListeners() {
   // http://stackoverflow.com/questions/19655189/javascript-click-event-listener-on-class
   var fetchXml = function () {
     var stationList = this.getAttribute("value");
-    buildTable(stationList);
+    var tableDiv = document.querySelector("#tableContainer");
+    while (tableDiv.firstChild) {
+      tableDiv.removeChild(tableDiv.firstChild);
+    }
+    tableDiv.appendChild(buildTable(stationList));
     var xmlPages = [
       {
         "name": "fields",
@@ -253,7 +365,11 @@ function addListeners() {
 addListeners();
 
 function autoRunTestCase() {
-  buildTable(TEST_CASE_STATIONS);
+  var tableDiv = document.querySelector("#tableContainer");
+  while (tableDiv.firstChild) {
+    tableDiv.removeChild(tableDiv.firstChild);
+  }
+  tableDiv.appendChild(buildTable(TEST_CASE_STATIONS));
   var xmlPages = [
     {
       "name": "fields",

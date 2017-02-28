@@ -45,7 +45,7 @@ QUnit.test("getCeilFromSkyCond(skyCondNode)", function (assert){
           "@attributes": {
             "sky_cover": "CLR"
           }
-        }), 99999);
+        }), 99900);
   assert.deepEqual(getCeilFromSkyCond([
           {
             "@attributes": {
@@ -61,8 +61,8 @@ QUnit.test("getCeilFromSkyCond(skyCondNode)", function (assert){
           }
         ]), 1900);
 });
-QUnit.test("canFileMetar(metarJson, useCirclAppch = false)", function (assert){
-  assert.deepEqual(canFileMetar({
+QUnit.test("canFile(wxJson, useCirclAppch = false)", function (assert){
+  assert.deepEqual(canFile({
         "raw_text": "KVAD 270306Z AUTO 00000KT 4SM R36/4500FT HZ CLR 08/00 A3023 RMK AO2 SLP240",
         "station_id": "KVAD",
         "observation_time": "2017-02-27T03:06:00Z",
@@ -89,7 +89,7 @@ QUnit.test("canFileMetar(metarJson, useCirclAppch = false)", function (assert){
         "metar_type": "SPECI",
         "elevation_m": "71.0"
       }), true);
-  assert.deepEqual(canFileMetar({
+  assert.deepEqual(canFile({
         "raw_text": "KBLU 270314Z AUTO 18017G25KT 3/4SM BR OVC002 M02/M02 A2975 RMK AO2 T10221022 TSNO",
         "station_id": "KBLU",
         "observation_time": "2017-02-27T03:14:00Z",
@@ -119,8 +119,8 @@ QUnit.test("canFileMetar(metarJson, useCirclAppch = false)", function (assert){
         "elevation_m": "1609.0"
       }), false);
 });
-QUnit.test("altReqdMetar(metarJson)", function (assert){
-  assert.deepEqual(altReqdMetar({
+QUnit.test("altReqd(wxJson)", function (assert){
+  assert.deepEqual(altReqd({
         "raw_text": "KBLU 270314Z AUTO 18017G25KT 3/4SM BR OVC002 M02/M02 A2975 RMK AO2 T10221022 TSNO",
         "station_id": "KBLU",
         "observation_time": "2017-02-27T03:14:00Z",
@@ -149,7 +149,7 @@ QUnit.test("altReqdMetar(metarJson)", function (assert){
         "metar_type": "SPECI",
         "elevation_m": "1609.0"
       }), true);
-  assert.deepEqual(altReqdMetar({
+  assert.deepEqual(altReqd({
         "raw_text": "KVAD 270314Z AUTO 11005KT 4SM HZ CLR 09/01 A3023 RMK AO2 SLP240 $",
         "station_id": "KVAD",
         "observation_time": "2017-02-27T03:14:00Z",
@@ -178,8 +178,8 @@ QUnit.test("altReqdMetar(metarJson)", function (assert){
         "elevation_m": "71.0"
       }), false);
 });
-QUnit.test("isValidAltMetar(metarJson)", function (assert){
-  assert.deepEqual(isValidAltMetar({
+QUnit.test("isValidAlt(wxJson)", function (assert){
+  assert.deepEqual(isValidAlt({
         "raw_text": "KVAD 270306Z AUTO 00000KT 4SM R36/4500FT HZ CLR 08/00 A3023 RMK AO2 SLP240",
         "station_id": "KVAD",
         "observation_time": "2017-02-27T03:06:00Z",
@@ -206,7 +206,7 @@ QUnit.test("isValidAltMetar(metarJson)", function (assert){
         "metar_type": "SPECI",
         "elevation_m": "71.0"
       }), true);
-  assert.deepEqual(isValidAltMetar({
+  assert.deepEqual(isValidAlt({
         "raw_text": "KBLU 270314Z AUTO 18017G25KT 3/4SM BR OVC002 M02/M02 A2975 RMK AO2 T10221022 TSNO",
         "station_id": "KBLU",
         "observation_time": "2017-02-27T03:14:00Z",
@@ -282,7 +282,80 @@ QUnit.test("getStoplightClassFromMetar(metarJson, isHomeStation = false)", funct
         "elevation_m": "735.0"
       }), "bg-success");
   });
+QUnit.test("getStoplightClassFromTaf(tafJson, isHomeStation = false)", function (assert){
+  assert.deepEqual(getStoplightClassFromTaf({
+            "fcst_time_from": "2017-03-01T05:00:00Z",
+            "fcst_time_to": "2017-03-01T10:00:00Z",
+            "change_indicator": "BECMG",
+            "time_becoming": "2017-03-01T06:00:00Z",
+            "wind_dir_degrees": "240",
+            "wind_speed_kt": "20",
+            "wind_gust_kt": "35",
+            "visibility_statute_mi": "4.97",
+            "altim_in_hg": "29.49803",
+            "wx_string": "-SHRA",
+            "sky_condition": {
+              "@attributes": {
+                "sky_cover": "BKN",
+                "cloud_base_ft_agl": "1000"
+              }
+            },
+            "turbulence_condition": {
+              "@attributes": {
+                "turbulence_intensity": "4",
+                "turbulence_max_alt_ft_agl": "4000"
+              }
+            },
+            "icing_condition": [
+              {
+                "@attributes": {
+                  "icing_intensity": "1",
+                  "icing_min_alt_ft_agl": "2000",
+                  "icing_max_alt_ft_agl": "11000"
+                }
+              },
+              {
+                "@attributes": {
+                  "icing_intensity": "1",
+                  "icing_min_alt_ft_agl": "11000",
+                  "icing_max_alt_ft_agl": "14000"
+                }
+              }
+            ]
+          }, true), "bg-warning");
+});
 QUnit.test("convertTextTime(textTime)", function (assert){
   assert.deepEqual(convertTextTime("2017-02-27T14:13:00Z"), new Date(Date.UTC(2017, 1, 27, 14, 13)));
   assert.deepEqual(convertTextTime("\"2017-02-27T14:13:00Z\""), new Date(Date.UTC(2017, 1, 27, 14, 13)));
+});
+QUnit.test("belowMinsForTempShwrs(forecast)", function (assert){
+  assert.deepEqual(belowMinsForTempShwrs({
+            "fcst_time_from": "2017-02-27T21:00:00Z",
+            "fcst_time_to": "2017-02-28T01:00:00Z",
+            "wind_dir_degrees": "220",
+            "wind_speed_kt": "15",
+            "wind_gust_kt": "20",
+            "visibility_statute_mi": "4.97",
+            "altim_in_hg": "29.29134",
+            "wx_string": "-SHRA",
+            "sky_condition": {
+              "@attributes": {
+                "sky_cover": "BKN",
+                "cloud_base_ft_agl": "900"
+              }
+            },
+            "turbulence_condition": {
+              "@attributes": {
+                "turbulence_intensity": "4",
+                "turbulence_max_alt_ft_agl": "4000"
+              }
+            },
+            "icing_condition": {
+              "@attributes": {
+                "icing_intensity": "1",
+                "icing_min_alt_ft_agl": "8000",
+                "icing_max_alt_ft_agl": "16000"
+              }
+            }
+          }), false);
 });
