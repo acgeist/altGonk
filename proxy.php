@@ -17,7 +17,6 @@
         curl_close($ch);
     }
     if ($result){
-        #echo $result; 
         echo json_encode(new SimpleXMLElement($result));
     } else {
        returnError(); 

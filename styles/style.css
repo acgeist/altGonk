@@ -3,16 +3,30 @@ body {
   margin-right: 10%;
 }
 
-img,
-button {
+img{
   width: 100%;
   max-width: 225px;
   max-height: 250px;
   margin: 10px;
 }
-pre {
-  height: 20%;
-  max-width: 100%;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+table{
+  background-color: #55595c;
+}
+.homeStation{
+  background-color: #0275d8;
+}
+.alternate{
+  background-color: #5bc0de;
+}
+.greenLight{
+  background-color: #5cb85c;
+}
+.yellowLight{
+  background-color: #f0ad4e;
+}
+.redLight{
+  background-color: #d9534f;
+}
+.darkBackground{
+  background-color: #55595c;
 }

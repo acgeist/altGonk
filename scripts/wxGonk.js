@@ -8,8 +8,12 @@ TODO:
 -Add a legend showing what each color means.
 -Allow user to hand-jam timezone/UTC offset
 -Embed a picture of the filing tree?
+-Write more/better tests for everything.
+-Add worst-case data to text of cells
+-Add TAF text to titles of cells
+-Dig into rounding issues/decide how to handle.
 */
-const TEST_CASE_STATIONS = "KGRB KSAW KFSD KOMA KJXN KORD KCVG KCRW";
+//const TEST_CASE_STATIONS = "KGRB KSAW KFSD KOMA KJXN KORD KCVG KCRW";
 const FILING_MINS = {
   "vis": 1.5,
   "ceiling": 500
@@ -23,12 +27,12 @@ const ALT_MINS = {
   "ceiling": 1000
 };
 const NO_CEIL_VAL = 99900;
-const STOPLIGHT_GREEN_CLASS = "bg-success";
-const STOPLIGHT_YELLOW_CLASS = "bg-warning";
-const STOPLIGHT_RED_CLASS = "bg-danger";
-const HOME_STATION_CLASS = "bg-primary";
-const ALT_CLASS = "bg-info";
-const METAR_STALE_TIME = 1000 * 60 * 90;
+const STOPLIGHT_GREEN_CLASS = "greenLight"; //"bg-success";
+const STOPLIGHT_YELLOW_CLASS = "yellowLight"; //"bg-warning";
+const STOPLIGHT_RED_CLASS = "redLight"; //"bg-danger";
+const HOME_STATION_CLASS = "homeStation"; //"bg-primary";
+const ALT_CLASS = "alternate"; //"bg-info";
+const METAR_STALE_TIME = 1000 * 60 * 90; //90 minutes
 
 function makeUrl(dataSource, stationList) {
   var ending;
@@ -43,8 +47,7 @@ function makeUrl(dataSource, stationList) {
     ending = "stations&stationString=";
     break;
   default:
-    console.log("Error: wxgonk.js/makeUrl(" + dataSource + ", " + stationList + ") could not generate a valid URL.");
-    break;
+    return "https://www.aviationweather.gov/adds/dataserver_current/current/";
   }
   return ["https://www.aviationweather.gov", "/adds", "/dataserver_current", "/httpparam?", "requestType=retrieve",
         "&format=xml", "&dataSource=", ending, stationList.replace(/\s/g, "%20")].join("");
@@ -57,8 +60,7 @@ function hasCeil(skyCondNode) {
     return skyCondNode.filter(function (layer) {
         var type = layer["@attributes"].sky_cover;
         return type === "BKN" || type === "OVC" || type === "OVX";
-      })
-      .length > 0;
+      }).length > 0;
   } else {
     var type = skyCondNode["@attributes"]["sky_cover"];
     return type === "BKN" || type === "OVC" || type === "OVX";
@@ -87,7 +89,8 @@ function canFile(wxJson, useCirclAppch = false) {
   if (!useCirclAppch && wxJson.visibility_statute_mi !== undefined) {
     return wxJson.visibility_statute_mi >= FILING_MINS.vis;
   } else if (useCirclAppch && wxJson.visibility_statute_mi !== undefined) {
-    return wxJson.visibility_statute_mi >= FILING_MINS.vis && getCeilFromSkyCond(wxJson.sky_condition) >= FILING_MINS.ceiling;
+    return wxJson.visibility_statute_mi >= FILING_MINS.vis && 
+    getCeilFromSkyCond(wxJson.sky_condition) >= FILING_MINS.ceiling;
   } else if (!useCirclAppch && wxJson.visibility_statute_mi === undefined) {
     return true;
   } else if (useCirclAppch && wxJson.visibility_statute_mi === undefined) {
@@ -239,7 +242,7 @@ var processMetarData = function (metarJson) {
     });
 }
 var processTafData = function (tafJson) {
-  printRawJson(tafJson);
+  //printRawJson(tafJson);
   JSON.parse(tafJson)["data"]["TAF"].forEach(function (field) {
     //console.log("****************" + field.station_id + "****************");
     var fieldIdCell = document.querySelector("#" + field.station_id);
@@ -253,7 +256,7 @@ var processTafData = function (tafJson) {
         for (var i = 1; i < fieldIdRow.cells.length; i++) {
           //console.log("Comparing it to a cell that starts at " + fieldIdRow.cells[i].getAttribute("data-starttime"));
           if (new Date(fieldIdRow.cells[i].getAttribute("data-starttime")) >= getLocalFromIsoZulu(tafLine.fcst_time_from) &&
-            new Date(fieldIdRow.cells[i].getAttribute("data=starttime") < getLocalFromIsoZulu(tafLine.fcst_time_to))
+            new Date(fieldIdRow.cells[i].getAttribute("data-starttime") < getLocalFromIsoZulu(tafLine.fcst_time_to))
           ) {
             fieldIdRow.cells[i].setAttribute("class", qcStoplight(getStoplightClassFromTaf(tafLine, fieldIdRow.rowIndex === 1)));
           }
@@ -265,7 +268,7 @@ var processTafData = function (tafJson) {
       for (var i = 1; i < fieldIdRow.cells.length; i++) {
         //console.log("Comparing it to a cell that starts at " + fieldIdRow.cells[i].getAttribute("data-starttime"));
         if (new Date(fieldIdRow.cells[i].getAttribute("data-starttime")) >= getLocalFromIsoZulu(field.forecast.fcst_time_from) &&
-          new Date(fieldIdRow.cells[i].getAttribute("data=starttime") < getLocalFromIsoZulu(field.forecast.fcst_time_to))
+          new Date(fieldIdRow.cells[i].getAttribute("data-starttime") < getLocalFromIsoZulu(field.forecast.fcst_time_to))
         ) {
           fieldIdRow.cells[i].setAttribute("class", qcStoplight(getStoplightClassFromTaf(field.forecast, fieldIdRow.rowIndex === 1)));
         }
@@ -274,12 +277,12 @@ var processTafData = function (tafJson) {
   });
 }
 
-function printRawJson(jsonString) {
-  document.body.removeChild(document.body.lastChild);
-  var rawJson = document.createElement("pre");
-  rawJson.innerHTML = JSON.stringify($.parseJSON(jsonString), null, 2);
-  document.body.appendChild(rawJson);
-}
+// function printRawJson(jsonString) {
+//   document.body.removeChild(document.body.lastChild);
+//   var rawJson = document.createElement("pre");
+//   rawJson.innerHTML = JSON.stringify($.parseJSON(jsonString), null, 2);
+//   document.body.appendChild(rawJson);
+// }
 
 function buildTable(fieldNames, hours = 12) {
   var fieldArray = fieldNames.split(" "),
@@ -321,7 +324,83 @@ function buildTable(fieldNames, hours = 12) {
   table.setAttribute("id", "wxTable");
   return table;
 }
+// https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/from
+if (!Array.from) {
+  Array.from = (function () {
+    var toStr = Object.prototype.toString;
+    var isCallable = function (fn) {
+      return typeof fn === 'function' || toStr.call(fn) === '[object Function]';
+    };
+    var toInteger = function (value) {
+      var number = Number(value);
+      if (isNaN(number)) { return 0; }
+      if (number === 0 || !isFinite(number)) { return number; }
+      return (number > 0 ? 1 : -1) * Math.floor(Math.abs(number));
+    };
+    var maxSafeInteger = Math.pow(2, 53) - 1;
+    var toLength = function (value) {
+      var len = toInteger(value);
+      return Math.min(Math.max(len, 0), maxSafeInteger);
+    };
 
+    // The length property of the from method is 1.
+    return function from(arrayLike/*, mapFn, thisArg */) {
+      // 1. Let C be the this value.
+      var C = this;
+
+      // 2. Let items be ToObject(arrayLike).
+      var items = Object(arrayLike);
+
+      // 3. ReturnIfAbrupt(items).
+      if (arrayLike == null) {
+        throw new TypeError("Array.from requires an array-like object - not null or undefined");
+      }
+
+      // 4. If mapfn is undefined, then let mapping be false.
+      var mapFn = arguments.length > 1 ? arguments[1] : void undefined;
+      var T;
+      if (typeof mapFn !== 'undefined') {
+        // 5. else
+        // 5. a If IsCallable(mapfn) is false, throw a TypeError exception.
+        if (!isCallable(mapFn)) {
+          throw new TypeError('Array.from: when provided, the second argument must be a function');
+        }
+
+        // 5. b. If thisArg was supplied, let T be thisArg; else let T be undefined.
+        if (arguments.length > 2) {
+          T = arguments[2];
+        }
+      }
+
+      // 10. Let lenValue be Get(items, "length").
+      // 11. Let len be ToLength(lenValue).
+      var len = toLength(items.length);
+
+      // 13. If IsConstructor(C) is true, then
+      // 13. a. Let A be the result of calling the [[Construct]] internal method of C with an argument list containing the single item len.
+      // 14. a. Else, Let A be ArrayCreate(len).
+      var A = isCallable(C) ? Object(new C(len)) : new Array(len);
+
+      // 16. Let k be 0.
+      var k = 0;
+      // 17. Repeat, while k < len… (also steps a - h)
+      var kValue;
+      while (k < len) {
+        kValue = items[k];
+        if (mapFn) {
+          A[k] = typeof T === 'undefined' ? mapFn(kValue, k) : mapFn.call(T, kValue, k);
+        } else {
+          A[k] = kValue;
+        }
+        k += 1;
+      }
+      // 18. Let putStatus be Put(A, "length", len, true).
+      A.length = len;
+      // 20. Return A.
+      return A;
+    };
+  }());
+}
 function addListeners() {
   // http://stackoverflow.com/questions/19655189/javascript-click-event-listener-on-class
   var fetchXml = function () {
@@ -346,7 +425,7 @@ function addListeners() {
       }
         ];
     xmlPages.forEach(function (page) {
-      $.post("proxy.php", {
+      $.post("http://ec2-34-204-225-71.compute-1.amazonaws.com/proxy.php", {
           url: makeUrl(page.name, stationList)
         })
         .done(function (data) {
@@ -364,36 +443,36 @@ function addListeners() {
 }
 addListeners();
 
-function autoRunTestCase() {
-  var tableDiv = document.querySelector("#tableContainer");
-  while (tableDiv.firstChild) {
-    tableDiv.removeChild(tableDiv.firstChild);
-  }
-  tableDiv.appendChild(buildTable(TEST_CASE_STATIONS));
-  var xmlPages = [
-    {
-      "name": "fields",
-      "action": processFieldData
-      },
-    {
-      "name": "metars",
-      "action": processMetarData
-      },
-    {
-      "name": "tafs",
-      "action": processTafData
-      }
-        ];
-  xmlPages.forEach(function (page) {
-    $.post("proxy.php", {
-        url: makeUrl(page.name, TEST_CASE_STATIONS)
-      })
-      .done(function (data) {
-        page.action(data);
-      })
-      .fail(function () {
-        window.alert("fail!");
-      });
-  });
-}
-autoRunTestCase();
+// function autoRunTestCase() {
+//   var tableDiv = document.querySelector("#tableContainer");
+//   while (tableDiv.firstChild) {
+//     tableDiv.removeChild(tableDiv.firstChild);
+//   }
+//   tableDiv.appendChild(buildTable(TEST_CASE_STATIONS));
+//   var xmlPages = [
+//     {
+//       "name": "fields",
+//       "action": processFieldData
+//       },
+//     {
+//       "name": "metars",
+//       "action": processMetarData
+//       },
+//     {
+//       "name": "tafs",
+//       "action": processTafData
+//       }
+//         ];
+//   xmlPages.forEach(function (page) {
+//     $.post("proxy.php", {
+//         url: makeUrl(page.name, TEST_CASE_STATIONS)
+//       })
+//       .done(function (data) {
+//         page.action(data);
+//       })
+//       .fail(function () {
+//         window.alert("fail!");
+//       });
+//   });
+// }
+// autoRunTestCase();
