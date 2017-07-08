@@ -280,7 +280,7 @@ QUnit.test("getStoplightClassFromMetar(metarJson, isHomeStation = false)", funct
         "precip_in": "0.005",
         "metar_type": "METAR",
         "elevation_m": "735.0"
-      }), "bg-success");
+      }), "greenLight");
   });
 QUnit.test("getStoplightClassFromTaf(tafJson, isHomeStation = false)", function (assert){
   assert.deepEqual(getStoplightClassFromTaf({
@@ -322,7 +322,7 @@ QUnit.test("getStoplightClassFromTaf(tafJson, isHomeStation = false)", function 
                 }
               }
             ]
-          }, true), "bg-warning");
+          }, true), "yellowLight");
 });
 QUnit.test("convertTextTime(textTime)", function (assert){
   assert.deepEqual(convertTextTime("2017-02-27T14:13:00Z"), new Date(Date.UTC(2017, 1, 27, 14, 13)));

@@ -13,7 +13,7 @@ TODO:
 -Add TAF text to titles of cells
 -Dig into rounding issues/decide how to handle.
 */
-//const TEST_CASE_STATIONS = "KGRB KSAW KFSD KOMA KJXN KORD KCVG KCRW";
+const TEST_CASE_STATIONS = "KPOE MMMD KUTS KGLS KJCT";
 const FILING_MINS = {
   "vis": 1.5,
   "ceiling": 500
@@ -187,6 +187,8 @@ function getLocalFromIsoZulu(zuluTime){
   return new Date(year, month, date, (hours + offset));
 }
 
+//Ensure that the worst case is the one that gets reported (i.e. an optimistic TAF
+//won't overrule poor current conditions)
 function qcStoplight(newClass, currClass) {
   if (currClass === null) {
     return newClass;
@@ -425,7 +427,8 @@ function addListeners() {
       }
         ];
     xmlPages.forEach(function (page) {
-      $.post("http://ec2-34-204-225-71.compute-1.amazonaws.com/proxy.php", {
+      //$.post("http://ec2-34-204-225-71.compute-1.amazonaws.com/proxy.php", {
+      $.post("http://localhost/altGonk/proxy.php", {
           url: makeUrl(page.name, stationList)
         })
         .done(function (data) {
@@ -443,36 +446,36 @@ function addListeners() {
 }
 addListeners();
 
-// function autoRunTestCase() {
-//   var tableDiv = document.querySelector("#tableContainer");
-//   while (tableDiv.firstChild) {
-//     tableDiv.removeChild(tableDiv.firstChild);
-//   }
-//   tableDiv.appendChild(buildTable(TEST_CASE_STATIONS));
-//   var xmlPages = [
-//     {
-//       "name": "fields",
-//       "action": processFieldData
-//       },
-//     {
-//       "name": "metars",
-//       "action": processMetarData
-//       },
-//     {
-//       "name": "tafs",
-//       "action": processTafData
-//       }
-//         ];
-//   xmlPages.forEach(function (page) {
-//     $.post("proxy.php", {
-//         url: makeUrl(page.name, TEST_CASE_STATIONS)
-//       })
-//       .done(function (data) {
-//         page.action(data);
-//       })
-//       .fail(function () {
-//         window.alert("fail!");
-//       });
-//   });
-// }
-// autoRunTestCase();
+function autoRunTestCase() {
+  var tableDiv = document.querySelector("#tableContainer");
+  while (tableDiv.firstChild) {
+    tableDiv.removeChild(tableDiv.firstChild);
+  }
+  tableDiv.appendChild(buildTable(TEST_CASE_STATIONS));
+  var xmlPages = [
+    {
+      "name": "fields",
+      "action": processFieldData
+      },
+    {
+      "name": "metars",
+      "action": processMetarData
+      },
+    {
+      "name": "tafs",
+      "action": processTafData
+      }
+        ];
+  xmlPages.forEach(function (page) {
+    $.post("proxy.php", {
+        url: makeUrl(page.name, TEST_CASE_STATIONS)
+      })
+      .done(function (data) {
+        page.action(data);
+      })
+      .fail(function () {
+        window.alert("fail!");
+      });
+  });
+}
+autoRunTestCase();
